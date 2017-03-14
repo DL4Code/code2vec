@@ -10,7 +10,9 @@ target
 # Mobile Tools for Java (J2ME)
 .:mtj.tmp/
 outputData/
-
+OUTPUT/
+inputData/
+validation/
 # Package Files #
 *.jar
 *.war
