@@ -16,40 +16,46 @@ public class Code2VecDataProcessor {
 	
 	private static Logger logger = LoggerFactory.getLogger(Code2VecDataProcessor.class);
 
-	private static final String INPUT_FILE_PATH = "outputData/filter/";
+	private static final String INPUT_FILE_PATH = "inputData/selected_data/";
 	private static final String OUTPUT_FILE_PATH = "outputData/inputDataOfCode2Vec/";
 	
 	public static void main(String[] args) throws IOException {
-		Code2VecDataProcessor processor = new Code2VecDataProcessor();
-		
-		processor.processData(INPUT_FILE_PATH );
-	}
-
-	private void processData(String inputFilePath) throws IOException {
-		List<File> files = FileHelper.getAllFiles(inputFilePath, ".list");
+		List<File> files = FileHelper.getAllFiles(INPUT_FILE_PATH, ".list");
 		for (File file : files) {
-			processData(file);
+			Code2VecDataProcessor processor = new Code2VecDataProcessor(file, INPUT_FILE_PATH, OUTPUT_FILE_PATH);
+			processor.processData();
 		}
 	}
 
-	private void processData(File file) throws IOException {
-		String fileName = file.getName().replace(".list", ".txt");
-		String splitString = "";
-		int a = 0;
-		int b = 0;
-		if (file.getParent().contains("filter/labels/")) {
-			splitString = ",";
-			a = 1;
-		} else {
-			splitString = ", ";
-			a = 2;
-			b = 1;
-		}
+	private File file;
+	private String inputFilePath;
+	private String outputFilePath;
+
+	public Code2VecDataProcessor(File file, String inputFilePath, String outputFilePath) {
+		super();
+		this.file = file;
+		this.inputFilePath = inputFilePath;
+		this.outputFilePath = outputFilePath;
+	}
+
+	public void processData() throws IOException {
+		String fileName = file.getPath().replace(inputFilePath, outputFilePath);
+		String splitString = ", ";
+		int a = 2;
+		int b = 1;
+//		if (file.getParent().contains("/method_name/")) {
+//			splitString = ",";
+//			a = 1;
+//		} else {
+//			splitString = ", ";
+//			a = 2;
+//			b = 1;
+//		}
 		String content = FileHelper.readFile(file);
 		BufferedReader br = new BufferedReader(new StringReader(content));
 		String line = null;
 		StringBuilder outputData = new StringBuilder();
-		
+		int counter = 0;
 		while ((line = br.readLine()) != null) {
 			int indexOfHarshKey = line.indexOf("#");
 			
@@ -61,11 +67,19 @@ public class Code2VecDataProcessor {
 			List<String> featureVector = Arrays.asList(line.substring(indexOfHarshKey + a, line.length() - b).split(splitString));
 			int size = featureVector.size();
 			for (int i = 0; i < size - 1; i ++) {
-				outputData.append(featureVector.get(i).replace(" ", "") + " ");
+				outputData.append(featureVector.get(i).replaceAll(" ", "") + " ");
 			}
-			outputData.append(featureVector.get(size - 1).replace(" ", "") + "\n");
+			outputData.append(featureVector.get(size - 1).replaceAll(" ", "") + "\n");
+			
+			counter ++;
+			if (counter % 1000 == 0) {
+				FileHelper.outputToFile(fileName, outputData);
+				outputData.setLength(0);
+			}
 		}
 		
-		FileHelper.outputToFileCover(file.getParent().replace(INPUT_FILE_PATH, OUTPUT_FILE_PATH) + "/" + fileName, outputData);
+//		if (counter % 1000 != 0) {
+//			FileHelper.outputToFile(fileName, outputData);
+//		}
 	}
 }

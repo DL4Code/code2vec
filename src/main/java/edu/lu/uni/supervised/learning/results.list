@@ -1,0 +1,127 @@
+
+projects$feature-ast-node-name-with-node-labelSIZE=74
+projects$feature-only-ast-node-nameSIZE=74
+projects$feature-raw-tokens-with-operatorsSIZE=72
+projects$feature-raw-tokens-without-operatorsSIZE=66
+projects$feature-statement-node-name-with-all-node-labelSIZE=74
+
+30 labels:
+minimum word frequency: 1
+projects$feature-raw-tokens-without-operatorsSIZE=66
+Accuracy:        0.4252
+ Precision:       0.0313
+ Recall:          0.2988
+ F1 Score:        0.0566
+ 
+minimum word frequency: 2
+projects$feature-raw-tokens-with-operatorsSIZE=72
+Accuracy:        0.3353
+ Precision:       0.0399
+ Recall:          0.07
+ F1 Score:        0.0508
+projects$feature-raw-tokens-without-operatorsSIZE=66
+Accuracy:        0.393
+ Precision:       0.0522
+ Recall:          0.0283
+ F1 Score:        0.0367
+ 
+minimum word frequency: 3
+ minimum word frequency: 4
+minimum word frequency: 5
+minimum word frequency: 6
+ minimum word frequency: 7
+minimum word frequency: 8
+minimum word frequency: 9
+ minimum word frequency: 10
+ 
+2 or 8 labels: 
+all predicted results are the same.
+minimum word frequency: 1, 2, 3, 4, 5, 10
+ all predicted results are the same.
+ 
+minimum word frequency: 6
+ minimum word frequency: 7
+minimum word frequency: 8
+minimum word frequency: 9
+
+
+4 labels: without the main labels and the least labels
+minimum word frequency: 1
+projects$feature-only-ast-node-nameSIZE=74
+ Accuracy:        0.3239
+ Precision:       0.3998
+ Recall:          0.3079
+ F1 Score:        0.3479
+ 
+minimum word frequency: 2
+projects$feature-statement-node-name-with-all-node-labelSIZE=74
+ Accuracy:        0.3368
+ Precision:       0.3743
+ Recall:          0.3268
+ F1 Score:        0.3489
+ 
+minimum word frequency: 3
+projects$feature-raw-tokens-with-operatorsSIZE=72
+ Accuracy:        0.3276
+ Precision:       0.3686
+ Recall:          0.3191
+ F1 Score:        0.3421
+
+ minimum word frequency: 4
+projects$feature-only-ast-node-nameSIZE=74
+Accuracy:        0.3359
+ Precision:       0.3323
+ Recall:          0.3239
+ F1 Score:        0.3281
+ 
+minimum word frequency: 5
+projects$feature-raw-tokens-with-operatorsSIZE=72
+ Accuracy:        0.3422
+ Precision:       0.3683
+ Recall:          0.3291
+ F1 Score:        0.3476
+ 
+minimum word frequency: 6
+projects$feature-ast-node-name-with-node-labelSIZE=74
+ Accuracy:        0.3233
+ Precision:       0.3694
+ Recall:          0.3162
+ F1 Score:        0.3408
+ 
+ minimum word frequency: 7
+projects$feature-only-ast-node-nameSIZE=74
+ Accuracy:        0.3309
+ Precision:       0.3613
+ Recall:          0.3131
+ F1 Score:        0.3355
+ 
+minimum word frequency: 8
+projects$feature-only-ast-node-nameSIZE=74
+ Accuracy:        0.3288
+ Precision:       0.4232
+ Recall:          0.3115
+ F1 Score:        0.3588
+projects$feature-raw-tokens-without-operatorsSIZE=66
+ Accuracy:        0.2617
+ Precision:       0.4357
+ Recall:          0.2635
+ F1 Score:        0.3284
+ 
+minimum word frequency: 9
+projects$feature-raw-tokens-with-operatorsSIZE=72
+ Accuracy:        0.3482
+ Precision:       0.3578
+ Recall:          0.3442
+ F1 Score:        0.3509
+ 
+ minimum word frequency: 10
+projects$feature-ast-node-name-with-node-labelSIZE=74
+ Accuracy:        0.2912
+ Precision:       0.4995
+ Recall:          0.2727
+ F1 Score:        0.3528
+projects$feature-statement-node-name-with-all-node-labelSIZE=74
+ Accuracy:        0.3389
+ Precision:       0.3608
+ Recall:          0.3157
+ F1 Score:        0.3367 

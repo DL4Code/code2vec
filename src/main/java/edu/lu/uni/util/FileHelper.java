@@ -18,6 +18,57 @@ public class FileHelper {
 	
 	private static Logger log = LoggerFactory.getLogger(FileHelper.class);
 	
+	public static void renameFile() {
+		List<File> files = getAllDirectories("outputData/cnn/");
+		files.addAll(getAllDirectories("outputData/encoder/"));
+		
+//		for (File file : files) {
+//			
+//			String fileName = file.getPath();
+//			if ("RAW_CAMEL_TOKENIATION".equals(file.getName())) {
+//				//1
+//				file.renameTo(new File(fileName.replace(file.getName(), "1")));
+//			} else if ("SIMPLIFIED_NLP".equals(file.getName())) {
+//				//2
+//				file.renameTo(new File(fileName.replace(file.getName(), "2")));
+//			} else if ("SIMPLIFIED_NLP(2)".equals(file.getName())) {
+//				//3
+//				file.renameTo(new File(fileName.replace(file.getName(), "3")));
+//			} else if ("TOKENAZATION_WITH_NLP".equals(file.getName())) {
+//				//4
+//				file.renameTo(new File(fileName.replace(file.getName(), "4")));
+//			} else if ("TOKENAZATION_WITH_NLP(2)".equals(file.getName())) {
+//				//5
+//				file.renameTo(new File(fileName.replace(file.getName(), "5")));
+//			}
+//		}
+	}
+	
+	public static List<File> getAllDirectories(String filePath) {
+		return listAllDirectories(new File(filePath));
+	}
+
+	/**
+	 * Recursively list all files in file.
+	 * 
+	 * @param file
+	 * @return
+	 */
+	private static List<File> listAllDirectories(File file) {
+		List<File> fileList = new ArrayList<>();
+		
+		File[] files = file.listFiles();
+		
+		for (File f : files) {
+			if (f.isDirectory()) {
+				fileList.add(f);
+				fileList.addAll(listAllDirectories(f));
+			} 
+		}
+		
+		return fileList;
+	}
+	
 	public static void deleteDirectory(String dir) {
 		File file = new File(dir);
 		
@@ -383,6 +434,14 @@ public class FileHelper {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public static void makeDirectory(String fileName) {
+		deleteFile(fileName);
+		File file = new File(fileName.substring(0, fileName.lastIndexOf("/")));
+		if (!file.exists()) {
+			file.mkdirs();
 		}
 	}
 
