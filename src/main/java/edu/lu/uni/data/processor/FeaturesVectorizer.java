@@ -16,29 +16,45 @@ import edu.lu.uni.util.FileHelper;
 
 public class FeaturesVectorizer {
 	
-	private static final String ENCODED_FILE_PATH = "outputData/outputDataOfCode2Vec_";
-	private static final String RAW_TOKEN_FILE_PATH = "outputData/inputDataOfCode2Vec/";
-	private static final String OUTPUT_FILE_PATH = "outputData/encoder/";
-		
-	public static void main(String[] args) throws IOException {
-		FileHelper.deleteDirectory(OUTPUT_FILE_PATH);
-		
-		FeaturesVectorizer fv = new FeaturesVectorizer();
-		int sizeOfZeroVector = 100;
-		for (int i = 1; i <= 10;i ++) {
-			fv.vectorizeFeatures(sizeOfZeroVector, ENCODED_FILE_PATH + i + "/", RAW_TOKEN_FILE_PATH, 
-					ENCODED_FILE_PATH.replace("outputData/", OUTPUT_FILE_PATH) + i + "/");
-		}
+	private String inputFilePath1;  // encodedFilePath
+	private String inputFilePath2;  // rawTokenFilePath
+	private String outputFilePath;  // encodedFilePath
+	private int sizeOfZeroVector;
+	private String inputFileExtension;
+	private String outputFileExtension;
+	
+	public void setInputFilePath1(String inputFilePath1) {
+		this.inputFilePath1 = inputFilePath1;
 	}
 
-	public void vectorizeFeatures(int sizeOfZeroVector, String encodedFilePath, String rawTokenFilePath, String outputFilePath) throws IOException {
-		List<File> encodedFiles = FileHelper.getAllFiles(encodedFilePath, ".list");
-		List<File> rawTokenFiles = FileHelper.getAllFiles(rawTokenFilePath, ".list");
+	public void setInputFilePath2(String inputFilePath2) {
+		this.inputFilePath2 = inputFilePath2;
+	}
+
+	public void setOutputFilePath(String outputFilePath) {
+		this.outputFilePath = outputFilePath;
+	}
+
+	public void setSizeOfZeroVector(int sizeOfZeroVector) {
+		this.sizeOfZeroVector = sizeOfZeroVector;
+	}
+
+	public void setInputFileExtension(String inputFileExtension) {
+		this.inputFileExtension = inputFileExtension;
+	}
+
+	public void setOutputFileExtension(String outputFileExtension) {
+		this.outputFileExtension = outputFileExtension;
+	}
+
+	public void vectorizeFeatures() throws IOException {
+		List<File> encodedFiles = FileHelper.getAllFiles(inputFilePath1, inputFileExtension);
+		List<File> rawTokenFiles = FileHelper.getAllFiles(inputFilePath2, inputFileExtension);
 		
 		for (File encodedFile : encodedFiles) {
 			for (File rawTokenFile : rawTokenFiles) {
 				if (isMatched(encodedFile, rawTokenFile)) {
-					vectorizeFeatures(encodedFile, rawTokenFile, encodedFilePath, outputFilePath, sizeOfZeroVector);
+					vectorizeFeatures(encodedFile, rawTokenFile, outputFilePath, sizeOfZeroVector);
 					break;
 				}
 			}
@@ -55,10 +71,10 @@ public class FeaturesVectorizer {
 	 * @throws IOException
 	 */
 	public void vectorizeFeatures(int sizeOfZeroVector, String encodedFilePath, String rawTokenFilePath, String outputFilePath, String tokensPath1, String tokensPath2) throws IOException {
-		List<File> encodedFiles = FileHelper.getAllFiles(encodedFilePath, ".list");
-		List<File> rawTokenFiles = FileHelper.getAllFiles(rawTokenFilePath, ".list");
-		List<File> highFrequentTokenFiles = FileHelper.getAllFiles(tokensPath1, ".list");
-		List<File> tokenFiles = FileHelper.getAllFiles(tokensPath2, ".list"); // the files of tokens of method names.
+		List<File> encodedFiles = FileHelper.getAllFiles(encodedFilePath, inputFileExtension);
+		List<File> rawTokenFiles = FileHelper.getAllFiles(rawTokenFilePath, inputFileExtension);
+		List<File> highFrequentTokenFiles = FileHelper.getAllFiles(tokensPath1, inputFileExtension);
+		List<File> tokenFiles = FileHelper.getAllFiles(tokensPath2, inputFileExtension); // the files of tokens of method names.
 		
 		for (File encodedFile : encodedFiles) {
 			for (File rawTokenFile : rawTokenFiles) {
@@ -75,7 +91,7 @@ public class FeaturesVectorizer {
 	private File getMatchedFile(File encodedFile, List<File> tokenFiles) {
 		
 		for (File tokenFile : tokenFiles) {
-			String fileName = tokenFile.getName().replace(".list", "");
+			String fileName = tokenFile.getName().replace(inputFileExtension, "");
 			if (encodedFile.getName().contains(fileName)) {
 				return tokenFile;
 			}
@@ -101,7 +117,7 @@ public class FeaturesVectorizer {
 		Map<String, List<String>> featuresVectors = getFeaturesVectors(encodedFile);
 		String outputFileName = encodedFile.getPath();
 		String splitStr = " ";
-		outputFileName = outputFileName.replace(encodedFilePath, outputFilePath).replace(".list", ".csv");
+		outputFileName = outputFileName.replace(encodedFilePath, outputFilePath).replace(inputFileExtension, outputFileExtension);
 		
 		int maxSize = getMaxSize(rawTokenFile);
 		List<String> zeroList = new ArrayList<String>();
@@ -201,11 +217,11 @@ public class FeaturesVectorizer {
 		return tokens;
 	}
 
-	public void vectorizeFeatures(File encodedFile, File rawTokenFile, String encodedFilePath, String outputFilePath, int sizeOfZeroVector) throws IOException {
+	public void vectorizeFeatures(File encodedFile, File rawTokenFile, String outputFilePath, int sizeOfZeroVector) throws IOException {
 		Map<String, List<String>> featuresVectors = getFeaturesVectors(encodedFile);
-		String outputFileName = encodedFile.getPath();
+		String outputFileName = encodedFile.getName();
 		String splitStr = " ";
-		outputFileName = outputFileName.replace(encodedFilePath, outputFilePath).replace(".list", ".csv");
+		outputFileName = outputFilePath + outputFileName.replace(inputFileExtension, outputFileExtension);
 		
 		int maxSize = getMaxSize(rawTokenFile);
 		List<String> zeroList = new ArrayList<String>();
@@ -217,11 +233,7 @@ public class FeaturesVectorizer {
 		Scanner scanner = new Scanner(fis);
 		String rawFeature = null;
 		StringBuilder outputData = new StringBuilder();
-		List<Integer> headLine = new ArrayList<>();
-		for (int i = 1, size = maxSize * sizeOfZeroVector; i <= size; i ++) {
-			headLine.add(i);
-		}
-		outputData.append(headLine.toString().replace("[", "").replace("]", "") + "\n");
+		
 		int index = 0;
 		while (scanner.hasNextLine()) {
 			rawFeature = scanner.nextLine();
@@ -264,7 +276,7 @@ public class FeaturesVectorizer {
 		int maxSize = 0;
 		String fileName = file.getName();
 		if (fileName.contains("SIZE")) { // method_body
-			maxSize = Integer.parseInt(fileName.substring(fileName.toUpperCase().lastIndexOf("SIZE=") + "SIZE=".length(), fileName.lastIndexOf(".list")));
+			maxSize = Integer.parseInt(fileName.substring(fileName.toUpperCase().lastIndexOf("SIZE=") + "SIZE=".length(), fileName.lastIndexOf(inputFileExtension)));
 		} else { // method_name
 			FileInputStream fis = new FileInputStream(file);
 			Scanner scanner = new Scanner(fis);
@@ -311,30 +323,31 @@ public class FeaturesVectorizer {
 	private boolean isMatched(File encodedFile, File rawTokenFile) {
 		String encodedFileName = encodedFile.getName();
 		String rawTokenFileName = rawTokenFile.getName();
-		rawTokenFileName = rawTokenFileName.substring(0, rawTokenFileName.lastIndexOf(".list"));
+//		rawTokenFileName = rawTokenFileName.substring(0, rawTokenFileName.lastIndexOf(inputFileExtension));
 		
-		String encodedFilePath = encodedFile.getPath();
-		String rawTokenFilePath = rawTokenFile.getPath();
+//		String encodedFilePath = encodedFile.getPath();
+//		String rawTokenFilePath = rawTokenFile.getPath();
 		
-		if (encodedFileName.contains(rawTokenFileName)) {
-			if ((encodedFilePath.contains("/method_body/") && rawTokenFilePath.contains("/method_body/"))) {
-				return true;
-			}
-			if ((encodedFilePath.contains("/RAW_CAMEL_TOKENIATION/") && rawTokenFilePath.contains("/RAW_CAMEL_TOKENIATION/"))) {
-				return true;
-			}
-			if ((encodedFilePath.contains("/SIMPLIFIED_NLP/") && rawTokenFilePath.contains("/SIMPLIFIED_NLP/"))) {
-				return true;
-			}
-			if ((encodedFilePath.contains("/SIMPLIFIED_NLP(2)/") && rawTokenFilePath.contains("/SIMPLIFIED_NLP(2)/"))) {
-				return true;
-			}
-			if ((encodedFilePath.contains("/TOKENAZATION_WITH_NLP/") && rawTokenFilePath.contains("/TOKENAZATION_WITH_NLP/"))) {
-				return true;
-			}
-			if ((encodedFilePath.contains("/TOKENAZATION_WITH_NLP(2)/") && rawTokenFilePath.contains("/TOKENAZATION_WITH_NLP(2)/"))) {
-				return true;
-			}
+		if (encodedFileName.equals(rawTokenFileName)) {
+//			if ((encodedFilePath.contains("/method_body/") && rawTokenFilePath.contains("/method_body/"))) {
+//				return true;
+//			}
+//			if ((encodedFilePath.contains("/RAW_CAMEL_TOKENIATION/") && rawTokenFilePath.contains("/RAW_CAMEL_TOKENIATION/"))) {
+//				return true;
+//			}
+//			if ((encodedFilePath.contains("/SIMPLIFIED_NLP/") && rawTokenFilePath.contains("/SIMPLIFIED_NLP/"))) {
+//				return true;
+//			}
+//			if ((encodedFilePath.contains("/SIMPLIFIED_NLP(2)/") && rawTokenFilePath.contains("/SIMPLIFIED_NLP(2)/"))) {
+//				return true;
+//			}
+//			if ((encodedFilePath.contains("/TOKENAZATION_WITH_NLP/") && rawTokenFilePath.contains("/TOKENAZATION_WITH_NLP/"))) {
+//				return true;
+//			}
+//			if ((encodedFilePath.contains("/TOKENAZATION_WITH_NLP(2)/") && rawTokenFilePath.contains("/TOKENAZATION_WITH_NLP(2)/"))) {
+//				return true;
+//			}
+			return true;
 		}
 		
 		return false;

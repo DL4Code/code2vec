@@ -37,7 +37,7 @@ public class App {
 		String outputFilePath = Configuration.EMBEDDING_TOKENS_FILE_PATH;
 		FileHelper.deleteDirectory(outputFilePath);
 		
-		List<File> files = FileHelper.getAllFiles(inputFilePath, ".list");
+		List<File> files = FileHelper.getAllFiles(inputFilePath, Configuration.STRING_DATA_FILE_EXTENSION);
 		for (File file : files) {
 			Code2VecDataProcessor processor = new Code2VecDataProcessor(file, inputFilePath, outputFilePath);
 			processor.processData();
@@ -52,7 +52,7 @@ public class App {
     	
     	FileHelper.deleteDirectory(outputFilePath);
     	
-    	List<File> files = FileHelper.getAllFiles(inputFilePath, ".list");
+    	List<File> files = FileHelper.getAllFiles(inputFilePath, Configuration.STRING_DATA_FILE_EXTENSION);
 		Code2Vector cv = new Code2Vector();
 		for (File file : files) {
 			cv.embedTokens(file, minWordFrequency, sizeOfVector, inputFilePath, outputFilePath);
@@ -60,15 +60,23 @@ public class App {
 	}
 	
 	public void vectorizeEmbeddedTokens() throws IOException {
+		String inputFilePath = Configuration.EMBEDDED_TOKENS_FILE_PATH;
 		String outputFilePath = Configuration.EMBEDDED_TOKENS_VECTOR_FILE_PATH;
-		String encodedTokenFilePath = Configuration.EMBEDDED_TOKENS_FILE_PATH;
-		String rawTokenFilePath = Configuration.SELECTED_METHOD_BODY_PATH;
+		String rawTokenFilePath = Configuration.EMBEDDING_TOKENS_FILE_PATH;
 		FileHelper.deleteDirectory(outputFilePath);
 		
 		FeaturesVectorizer fv = new FeaturesVectorizer();
-		int sizeOfZeroVector = 100;
+		int sizeOfZeroVector = Configuration.SIZE_OF_VECTOR;
 		int minWordFrequency = Configuration.MIN_WORD_FREQUENCY;
-		fv.vectorizeFeatures(sizeOfZeroVector, encodedTokenFilePath + minWordFrequency + "/", rawTokenFilePath, 
-				encodedTokenFilePath.replace("outputData/", outputFilePath) + minWordFrequency + "/");
+		inputFilePath = inputFilePath + minWordFrequency + "/";
+		outputFilePath = outputFilePath + minWordFrequency + "/";
+		
+		fv.setInputFilePath1(inputFilePath);
+		fv.setInputFilePath2(rawTokenFilePath);
+		fv.setOutputFilePath(outputFilePath);
+		fv.setSizeOfZeroVector(sizeOfZeroVector);
+		fv.setInputFileExtension(Configuration.STRING_DATA_FILE_EXTENSION);
+		fv.setOutputFileExtension(Configuration.DIGITAL_DATA_FILE_EXTENSION);
+		fv.vectorizeFeatures();
 	}
 }
